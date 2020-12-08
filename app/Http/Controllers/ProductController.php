@@ -120,7 +120,7 @@ class ProductController extends Controller
             'shtrix' => 'required'
         ]);
         $fields = array();
-        
+
         if($request->input('new_category') != ""){
          $category = new Category;
          $category->title_ge = $request->input('new_category');
@@ -139,7 +139,7 @@ class ProductController extends Controller
             }
         }
         if($request->input('new_brand') != "" && is_string($request->input('new_brand'))){
-            $brand = new Brand;   
+            $brand = new Brand;
             $brand->name = $request->input('new_brand');
             $brand->save();
             $product->brand_id = $brand->id;
@@ -166,7 +166,7 @@ class ProductController extends Controller
         if ($product->fromwarehouse == 0) {
             $product->buy_price = intval($request->input('price') * 100);
         }else{
-            
+
             $product->price = intval($request->input('price') * 100);
         }
         $product->currency_type = $request->input('currency');
@@ -175,7 +175,7 @@ class ProductController extends Controller
         if ($request->file('images')) {
             foreach ($request->file('images') as $image) {
                 $imagename = date('Ymhs') . $image->getClientOriginalName();
-                $destination = base_path() . '/storage/app/public/productimage';
+                $destination = base_path() . '/storage/app/public_html/productimage';
                 $image->move($destination, $imagename);
                 $product->images()->create([
                     'name' => $imagename
@@ -201,7 +201,7 @@ class ProductController extends Controller
     public function getinfo(Request $request)
     {
         $this->validate($request, [
-           'id' => 'required|integer|min:0' 
+           'id' => 'required|integer|min:0'
         ]);
         $product = Product::select('unit','buy_price', 'stock', 'price')->findOrFail(intval($request->id));
         return response()->json(array('status' => true, 'product' => $product));
@@ -271,7 +271,7 @@ class ProductController extends Controller
     public function removefromCart(Product $product){
         $user_id = Auth()->user()->id;
         Cart::session($user_id)->remove($product->id);
-        
+
         $cartsum = 0;
         $cart = Cart::session($user_id)->getContent();
         foreach ($cart as $item) {
@@ -297,7 +297,7 @@ class ProductController extends Controller
         Cart::session($user_id)->update($id,[
             'quantity' => array(
                 'relative' => false,
-                'value' => $request->quantity, 
+                'value' => $request->quantity,
             ),
         ]);
         return redirect()->route('AddToCart');
@@ -315,7 +315,7 @@ class ProductController extends Controller
                 'quantity' => 'required|min:0',
             ]);
             $product = Product::findOrFail($request->select_product);
-            
+
             $currentquantity = Cart::session($user_id)->get($product->id);
 
             if($currentquantity){
@@ -336,7 +336,7 @@ class ProductController extends Controller
                     ),
                 ];
                 Cart::session($user_id)->add($addtocart);
-          
+
         }
         return redirect()->route('AddToCart');
     }
@@ -347,7 +347,7 @@ class ProductController extends Controller
             'address' => 'required|string',
             'paymethod' => 'required'
         ]);
-        // Check Cart 
+        // Check Cart
         $user_id = Auth()->user()->id;
         $total = Cart::session($user_id)->getTotal();
         if($total == 0){
@@ -357,12 +357,12 @@ class ProductController extends Controller
         $client = Client::findOrFail($request->client_id);
         $cart = Cart::session($user_id)->getContent();
         $sale = new Sale();
-        
+
         $sale->client_id = $request->client_id;
         $sale->address = $request->address;
         $sale->total = $total;
         $sale->seller_id = Auth()->user()->id;
-        
+
             if ($request->paymethod != 'consignation') {
                 $paymethods = PayController::findOrFail($request->paymethod);
                 if(!$paymethods){
@@ -380,7 +380,7 @@ class ProductController extends Controller
                         'amout' => $sale->paid
                     ]);
                 };
-                
+
             }else{
                 $sale->paid = intval($request->paid*100);
                 $sale->pay_method = "consignation";
@@ -393,7 +393,7 @@ class ProductController extends Controller
                         'amout' => $sale->paid
                     ]);
                 }
-                
+
             }
         SalaryToService::create([
             'user_id' => Auth::user()->id,

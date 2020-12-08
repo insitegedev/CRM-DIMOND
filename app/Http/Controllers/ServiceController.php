@@ -34,7 +34,7 @@ class ServiceController extends Controller
      */
     public function index()
     {
-      
+
         return view('theme.template.service.services');
     }
 
@@ -103,7 +103,7 @@ class ServiceController extends Controller
         }
         if($request->hasFile('file')){
             $imagename = date('Ymhs').$request->file('file')->getClientOriginalName();
-            $destination = base_path() . '/storage/app/public/serviceimg';
+            $destination = base_path() . '/storage/app/public_html/serviceimg';
             $request->file('file')->move($destination, $imagename);
             $service->image()->create([
                 'name' => $imagename
@@ -178,7 +178,7 @@ class ServiceController extends Controller
         }
         if($request->hasFile('file')){
             $imagename = date('Ymhs').$request->file('file')->getClientOriginalName();
-            $destination = base_path() . '/storage/app/public/serviceimg';
+            $destination = base_path() . '/storage/app/public_html/serviceimg';
             $request->file('file')->move($destination, $imagename);
             $service->image()->create([
                 'name' => $imagename
@@ -213,7 +213,7 @@ class ServiceController extends Controller
         $service->save();
         return redirect('/services');
     }
-    
+
 
 
     //Get Unit Name for Inventory Product
@@ -257,7 +257,7 @@ class ServiceController extends Controller
     }
     public function showservice(ClientService $clientservice)
     {
-        
+
         return view('theme.template.service.show', compact('clientservice'));
     }
 }
